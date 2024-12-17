@@ -1,0 +1,120 @@
+package com.digikala.controller;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+public class SearchController {
+
+    @GetMapping("/api/search")
+    public List<String> searchProducts(@RequestParam String query) throws IOException {
+        String url = "https://www.digikala.com/search/?q=" + query;
+        Document doc = Jsoup.connect(url).get();
+        Elements productElements = doc.select(".c-product-box__title");
+
+        List<String> productNames = new ArrayList<>();
+        for (Element product : productElements) {
+            productNames.add(product.text());
+        }
+
+        return productNames;
+    }
+}
+
+package com.digikala.controller;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+
+@RestController
+public class ProductController {
+
+    @GetMapping("/api/product-details")
+    public String getProductDetails(@RequestParam String productUrl) throws IOException {
+        Document doc = Jsoup.connect(productUrl).get();
+        String productName = doc.select(".pdp-e-product-title").text();
+        String productPrice = doc.select(".pdp-e-price-value").text();
+
+        return "Product Name: " + productName + "\nPrice: " + productPrice;
+    }
+}
+
+package com.digikala.controller;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+public class CartController {
+
+    private List<String> cart = new ArrayList<>();
+
+    @PostMapping("/api/add-to-cart")
+    public String addToCart(@RequestBody String productName) {
+        cart.add(productName);
+        return "Product added to cart: " + productName;
+    }
+}
+
+# application.properties
+server.port=8080
+
+mvn spring-boot:run
+# DigiKala Functional Calling
+
+### توضیحات پروژه
+این پروژه یک سیستم Functional Calling برای تعامل با ماژول‌های مختلف سایت دیجی‌کالا طراحی شده است. این ماژول‌ها شامل:
+- جستجوی محصولات
+- مشاهده جزئیات محصول
+- افزودن به سبد خرید
+
+### پیش‌نیازها
+- Java 17
+- Maven
+- Spring Boot
+
+### نحوه اجرا
+1. مخزن را کلون کنید:
+   ```bash
+   git clone https://github.com/username/DigiKalaFunctionalCalling.git
+
+cd DigiKalaFunctionalCalling
+
+mvn spring-boot:run
+
+http://localhost:8080/api
+
+### 7. **بارگذاری پروژه روی GitHub**
+
+پس از آماده‌سازی کدها، می‌توانید پروژه خود را روی GitHub بارگذاری کنید.
+
+1. ابتدا در پوشه پروژه خود، Git را راه‌اندازی کنید:
+   ```bash
+   git init
+
+git remote add origin https://github.com/username/DigiKalaFunctionalCalling.git
+
+git add .
+
+git commit -m "Initial commit for DigiKala Functional Calling project"
+
+git push -u origin main
+
